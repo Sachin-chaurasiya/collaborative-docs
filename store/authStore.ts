@@ -5,6 +5,8 @@ import { ID, Models } from 'appwrite';
 
 const { account } = APPWRITE_CLIENT;
 
+const ERROR_TIMEOUT = 8000;
+
 interface AuthState {
   user: Models.User<Models.Preferences> | null;
   session: Models.Session | null;
@@ -15,8 +17,6 @@ interface AuthState {
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
-
-const ERROR_TIMEOUT = 8000;
 
 export const useAuthStore = create<AuthState>()(
   persist(
