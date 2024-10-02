@@ -1,8 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { FileText, Users, Share2, ShieldCheck } from 'lucide-react';
+import { useAuthStore } from '@/store/authStore';
 
 export default function LandingPage() {
+  const { user } = useAuthStore();
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
@@ -18,14 +23,20 @@ export default function LandingPage() {
                   collaboration tools for teams of all sizes.
                 </p>
               </div>
-              <div className="space-x-4">
+              {user ? (
                 <Button asChild>
-                  <Link href="/signup">Get Started</Link>
+                  <Link href="/dashboard">Dashboard</Link>
                 </Button>
-                <Button variant="outline" asChild>
-                  <Link href="/login">Log In</Link>
-                </Button>
-              </div>
+              ) : (
+                <div className="space-x-4">
+                  <Button asChild>
+                    <Link href="/signup">Get Started</Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/login">Log In</Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -82,7 +93,9 @@ export default function LandingPage() {
                 </p>
               </div>
               <Button asChild size="lg">
-                <Link href="/signup">Sign Up for Free</Link>
+                <Link href={user ? '/dashboard' : '/signup'}>
+                  Sign Up for Free
+                </Link>
               </Button>
             </div>
           </div>
