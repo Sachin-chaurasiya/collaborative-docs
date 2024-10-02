@@ -4,7 +4,7 @@ services:
     ports:
       - '7766:7000'
     environment:
-      - PDP_API_KEY=${PERMIT_API_KEY}
+      - PDP_API_KEY=${NEXT_PUBLIC_PERMIT_API_KEY}
       - PDP_DEBUG=True
     stdin_open: true
     tty: true
