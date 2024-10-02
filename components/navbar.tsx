@@ -22,7 +22,7 @@ export default function Navbar() {
         ) : (
           <Link
             className="text-sm font-medium hover:underline underline-offset-4"
-            href="#features"
+            href="/#features"
           >
             Features
           </Link>
