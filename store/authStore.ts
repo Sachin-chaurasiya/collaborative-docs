@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { APPWRITE_CLIENT } from '@/lib/appwrite';
 import { ID, Models } from 'appwrite';
+import { syncUserWithPermit } from '@/app/actions';
 
 const { account } = APPWRITE_CLIENT;
 
@@ -59,6 +60,9 @@ export const useAuthStore = create<AuthState>()(
           const user = await account.get();
 
           set({ user, isLoading: false, session });
+
+          // sync user with permit.io
+          await syncUserWithPermit({ email: user.email, key: user.email });
         } catch (error) {
           set({ error: (error as Error).message, isLoading: false });
 
