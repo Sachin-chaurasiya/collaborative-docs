@@ -14,9 +14,12 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Register() {
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get('next');
+
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -76,7 +79,9 @@ export default function Register() {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button type="submit">Register</Button>
-          <Link href="/login">Login</Link>
+          <Link href={nextPath ? `/login?next=${nextPath}` : '/login'}>
+            Login
+          </Link>
         </CardFooter>
       </form>
       {error && <p className="text-red-500 text-center mt-2 py-2">{error}</p>}

@@ -14,9 +14,11 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Login() {
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get('next');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +28,7 @@ export default function Login() {
     e.preventDefault();
     await login(email, password);
     if (!error) {
-      router.push('/dashboard');
+      router.push(nextPath ?? '/dashboard');
     }
   };
 
@@ -67,7 +69,9 @@ export default function Login() {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button type="submit">Login</Button>
-          <Link href="/signup">Sign up</Link>
+          <Link href={nextPath ? `/signup?next=${nextPath}` : '/signup'}>
+            Sign up
+          </Link>
         </CardFooter>
       </form>
       {error && <p className="text-red-500 text-center mt-2 py-2">{error}</p>}

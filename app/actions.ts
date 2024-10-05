@@ -26,6 +26,16 @@ interface ResourcePermission {
   permission: string;
 }
 
+async function getPermitioUser(key: string) {
+  try {
+    const user = await PERMITIO_CLIENT.api.users.getByKey(key);
+    return user;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 /**
  *
  * @param user `{email: string, key: string}`
@@ -78,6 +88,15 @@ export async function assignResourceInstanceRoleToUser(
   resourceInstanceRole: ResourceInstanceRole
 ) {
   try {
+    const user = await getPermitioUser(resourceInstanceRole.user);
+
+    if (!user) {
+      await syncUserWithPermit({
+        email: resourceInstanceRole.user,
+        key: resourceInstanceRole.user,
+      });
+    }
+
     const assignedRole = await PERMITIO_CLIENT.api.roleAssignments.assign({
       user: resourceInstanceRole.user,
       role: resourceInstanceRole.role,
