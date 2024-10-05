@@ -20,20 +20,12 @@ interface ResourceInstanceRole {
   resource_instance: string;
 }
 
+export type PermissionType = 'read' | 'create' | 'delete' | 'update';
+
 interface ResourcePermission {
   user: string;
   resource_instance: string;
-  permission: string;
-}
-
-async function getPermitioUser(key: string) {
-  try {
-    const user = await PERMITIO_CLIENT.api.users.getByKey(key);
-    return user;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+  permissions: PermissionType[];
 }
 
 /**
@@ -47,6 +39,16 @@ export async function syncUserWithPermit(user: User) {
     console.log('User synced with permit.io', syncedUser.email);
   } catch (error) {
     console.error(error);
+  }
+}
+
+async function getPermitioUser(key: string) {
+  try {
+    const user = await PERMITIO_CLIENT.api.users.getByKey(key);
+    return user;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
 }
 
@@ -123,17 +125,28 @@ export async function assignResourceInstanceRoleToUser(
  * @param resourcePermission `{user: string, resource_instance: string, permission: string}`
  * @returns permitted
  */
-export async function checkResourcePermission(
+export async function getResourcePermissions(
   resourcePermission: ResourcePermission
 ) {
   try {
-    const permitted = await PERMITIO_CLIENT.check(
-      resourcePermission.user,
-      resourcePermission.permission,
-      resourcePermission.resource_instance
-    );
+    const permissions = resourcePermission.permissions;
 
-    return permitted;
+    const permissionMap: Record<PermissionType, boolean> = {
+      read: false,
+      create: false,
+      delete: false,
+      update: false,
+    };
+
+    for await (const permission of permissions) {
+      permissionMap[permission] = await PERMITIO_CLIENT.check(
+        resourcePermission.user,
+        permission,
+        resourcePermission.resource_instance
+      );
+    }
+
+    return permissionMap;
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
@@ -141,6 +154,11 @@ export async function checkResourcePermission(
       console.log('An unknown error occurred');
     }
 
-    return false;
+    return {
+      read: false,
+      create: false,
+      delete: false,
+      update: false,
+    };
   }
 }
