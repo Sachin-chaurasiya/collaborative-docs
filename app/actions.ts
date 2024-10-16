@@ -1,6 +1,6 @@
 'use server';
 
-import { PERMITIO_CLIENT } from '@/lib/permitio';
+import { PERMITIO_SDK } from '@/lib/permitio';
 
 // permit.io actions
 
@@ -34,7 +34,7 @@ interface ResourcePermission {
  */
 export async function syncUserWithPermit(user: User) {
   try {
-    const syncedUser = await PERMITIO_CLIENT.api.syncUser(user);
+    const syncedUser = await PERMITIO_SDK.api.syncUser(user);
 
     console.log('User synced with permit.io', syncedUser.email);
   } catch (error) {
@@ -44,7 +44,7 @@ export async function syncUserWithPermit(user: User) {
 
 async function getPermitioUser(key: string) {
   try {
-    const user = await PERMITIO_CLIENT.api.users.getByKey(key);
+    const user = await PERMITIO_SDK.api.users.getByKey(key);
     return user;
   } catch (error) {
     console.error(error);
@@ -62,7 +62,7 @@ export async function createResourceInstance(
 ) {
   console.log('Creating a resource instance...');
   try {
-    const createdInstance = await PERMITIO_CLIENT.api.resourceInstances.create({
+    const createdInstance = await PERMITIO_SDK.api.resourceInstances.create({
       key: resourceInstance.key,
       tenant: 'default',
       resource: resourceInstance.resource,
@@ -99,7 +99,7 @@ export async function assignResourceInstanceRoleToUser(
       });
     }
 
-    const assignedRole = await PERMITIO_CLIENT.api.roleAssignments.assign({
+    const assignedRole = await PERMITIO_SDK.api.roleAssignments.assign({
       user: resourceInstanceRole.user,
       role: resourceInstanceRole.role,
       resource_instance: resourceInstanceRole.resource_instance,
@@ -139,7 +139,7 @@ export async function getResourcePermissions(
     };
 
     for await (const permission of permissions) {
-      permissionMap[permission] = await PERMITIO_CLIENT.check(
+      permissionMap[permission] = await PERMITIO_SDK.check(
         resourcePermission.user,
         permission,
         resourcePermission.resource_instance
