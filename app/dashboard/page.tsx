@@ -58,8 +58,8 @@ export default function Dashboard() {
     setIsLoading(true);
     try {
       const response = await APPWRITE_CLIENT.databases.listDocuments<Document>(
-        '66fad2d0001b08997cb9',
-        '66fad37e0033c987cf4d',
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID||'',
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID||'',
         [Query.contains('created_by', user?.$id ?? '')]
       );
       setDocuments(response.documents);
@@ -80,8 +80,8 @@ export default function Dashboard() {
     try {
       const documentId = ID.unique();
       const response = await APPWRITE_CLIENT.databases.createDocument<Document>(
-        '66fad2d0001b08997cb9',
-        '66fad37e0033c987cf4d',
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID||'',
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID||'',
         documentId,
         {
           title: newDocTitle.trim(),
