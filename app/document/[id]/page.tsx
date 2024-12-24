@@ -26,8 +26,8 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
   const fetchDocument = async () => {
     try {
       const document = await APPWRITE_CLIENT.databases.getDocument<Document>(
-        '66fad2d0001b08997cb9',
-        '66fad37e0033c987cf4d',
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID||'',
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID||'',
         params.id
       );
 
